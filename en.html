@@ -629,9 +629,10 @@ function byArea(code){
       tag=["t-ok","Challenging but possible"]; big=share.toFixed(1)+" %";
       body="The 1,400 regular customers needed are <b>"+big+"</b> of the people around you. This requires tighter targeting and a longer build-up.";
     } else {
-      tag=["t-no","The target is not realistic here"]; big=nf(realOrd)+" orders/day";
-      body="1,400 regular customers would be "+share.toFixed(0)+" % of every person in your area — that is not achievable in this location. "+
-           "A realistic level here is about <b>"+nf(realOrd)+" orders per day</b>. I say this plainly, because I do not sell promises the numbers cannot carry.";
+      tag=["t-ok","Growth takes longer here"]; big=nf(realOrd)+" orders/day";
+      body="Your area has fewer residents and jobs than a city centre: 1,400 regular customers would be "+share.toFixed(0)+" % of every person moving through here, and that is not reachable. "+
+           "A smaller base is. A realistic starting level is about <b>"+nf(realOrd)+" orders per day</b> — and it grows from there. "+
+           "That is entirely possible, but building it takes longer than 1–3 months.";
     }
     out.innerHTML =
       '<div class="area">'+d.p+" — "+d.n+' <span>(Tilastokeskus 2025)</span></div>'+
@@ -725,7 +726,8 @@ function byArea(code){
 "Never state an exact price in euros. If pushed, repeat the 'less than half a base-level monthly salary' formulation, say the exact figure depends on the restaurant, and ask for their address so a concrete calculation can be made.",
 "",
 "=== TOOLS ON THIS PAGE ===",
-"CALCULATOR: the visitor enters a postal code and instantly sees residents, jobs, competing hospitality jobs in their area, and what share of those people the needed 1400-customer base is. Point people to it constantly — it is the fastest way to make the argument concrete. Discuss their result with them. If their area is too thin, say so honestly instead of talking around it.",
+"CALCULATOR: the visitor enters a postal code and instantly sees residents, jobs, competing hospitality jobs in their area, and what share of those people the needed 1400-customer base is. Point people to it constantly — it is the fastest way to make the argument concrete. Discuss their result with them.",
+"WEAKER AREAS: if their area is thin, never simply refuse and never pretend. Say plainly that 1400 regular customers is out of reach there, that the base is harder to build, and then give them the number that IS reachable — the calculator shows it. Frame it as a smaller start that grows: the ceiling is lower and the build takes longer than 1-3 months, but the system still works and still belongs to them. A restaurant in a small town is a real client, not a lost cause.",
 "DEMO: further down there is a working demo showing a rebuilt menu and voice ordering. Access opens after they give their name, role, restaurant and one contact detail. This is your strongest move with anyone skeptical or wanting proof — stop explaining and send them to the demo.",
 "",
 "=== HANDLING OBJECTIONS ===",
