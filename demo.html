@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="fi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Demo — Ruokalista uudelleen rakennettuna</title>
+<style>
+  :root{
+    --bg:#0a0a0b; --bg2:#111113; --line:#26262a;
+    --ink:#f2f0ec; --dim:#9a968f; --gold:#e0a44c; --gold-dim:#8a6528;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:400 17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px}
+  section{padding:74px 0; border-top:1px solid var(--line)}
+  h1,h2,h3{line-height:1.15; margin:0 0 18px; letter-spacing:-.02em}
+  h1{font-size:clamp(32px,5.5vw,54px); font-weight:800}
+  h2{font-size:clamp(26px,4vw,40px); font-weight:800}
+  h3{font-size:19px; font-weight:700}
+  p{margin:0 0 16px; color:var(--dim)}
+  p.lead{color:var(--ink); font-size:clamp(17px,2.1vw,20px)}
+  .gold{color:var(--gold)}
+  .kicker{font-size:13px; letter-spacing:.16em; text-transform:uppercase; color:var(--gold); font-weight:700; margin-bottom:16px}
+
+  .banner{
+    background:rgba(224,164,76,.1); border-bottom:1px solid var(--gold-dim);
+    padding:12px 0; font-size:14px; text-align:center; color:var(--gold);
+  }
+  .hero{
+    padding:80px 0 64px; text-align:center;
+    background:radial-gradient(900px 460px at 50% -14%, rgba(224,164,76,.15), transparent 62%);
+  }
+
+  .grid{display:grid; gap:20px}
+  @media(min-width:820px){ .g2{grid-template-columns:1fr 1fr} }
+
+  /* ennen / jälkeen */
+  .panel{background:var(--bg2); border:1px solid var(--line); border-radius:12px; padding:24px}
+  .panel.after{border-color:var(--gold-dim)}
+  .panel .lab{
+    font-size:12px; letter-spacing:.14em; text-transform:uppercase; font-weight:800;
+    margin-bottom:16px; display:inline-block; padding:5px 11px; border-radius:20px;
+  }
+  .lab.old{background:#242427; color:#8d8a85}
+  .lab.new{background:rgba(224,164,76,.15); color:var(--gold)}
+  .oldmenu{columns:2; column-gap:22px; font-size:12.5px; line-height:1.85; color:#6f6c67}
+  .oldmenu div{break-inside:avoid}
+  .oldnote{margin-top:16px; font-size:13px; color:#5f5c58; border-top:1px solid var(--line); padding-top:12px}
+
+  .hit{
+    display:flex; justify-content:space-between; align-items:baseline; gap:14px;
+    padding:15px 0; border-bottom:1px solid var(--line);
+  }
+  .hit:last-of-type{border-bottom:0}
+  .hit b{font-size:19px; font-weight:700; letter-spacing:-.01em}
+  .hit small{display:block; color:var(--dim); font-size:13.5px; font-weight:400; margin-top:3px}
+  .hit .pr{color:var(--gold); font-weight:800; font-size:17px; white-space:nowrap; font-variant-numeric:tabular-nums}
+
+  /* tilaus */
+  .order{background:var(--bg2); border:1px solid var(--gold-dim); border-radius:14px; padding:30px 26px}
+  .micwrap{text-align:center; padding:18px 0 6px}
+  .micbtn{
+    width:96px; height:96px; border-radius:50%; border:0; cursor:pointer;
+    background:var(--gold); color:#14100a; font-family:inherit;
+    display:inline-flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 34px rgba(224,164,76,.22); transition:transform .15s ease;
+  }
+  .micbtn:hover{transform:scale(1.04)}
+  .micbtn svg{width:38px; height:38px; fill:currentColor}
+  .micbtn.rec{background:#c0392b; color:#fff; animation:pulse 1.2s infinite}
+  .micbtn:disabled{opacity:.45; cursor:default; transform:none}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+  .micstate{margin-top:16px; font-size:15px; color:var(--dim); min-height:24px}
+  .micstate.live{color:#e08a7c}
+
+  .cart{margin-top:24px; border-top:1px solid var(--line); padding-top:20px; display:none}
+  .cart.on{display:block}
+  .row{display:flex; justify-content:space-between; gap:14px; padding:11px 0; border-bottom:1px solid var(--line); font-size:16px}
+  .row .q{color:var(--gold); font-weight:800; margin-right:9px}
+  .row .s{color:var(--dim); font-size:13.5px}
+  .sum{display:flex; justify-content:space-between; padding:16px 0 4px; font-size:21px; font-weight:800}
+  .sum span:last-child{color:var(--gold)}
+  .meta{background:#0c0c0e; border:1px solid var(--line); border-radius:9px; padding:14px 16px; margin-top:14px; font-size:15px}
+  .meta div{display:flex; justify-content:space-between; gap:12px; padding:4px 0}
+  .meta .k{color:var(--dim)}
+  .warn{
+    background:rgba(200,70,70,.1); border:1px solid #4a2020; color:#e8b4b4;
+    border-radius:9px; padding:14px 16px; margin-top:14px; font-size:15px;
+  }
+  .confirm{display:flex; gap:11px; flex-wrap:wrap; margin-top:20px}
+  .btn{
+    border:0; border-radius:8px; padding:14px 26px; font:inherit; font-weight:800;
+    font-size:16px; cursor:pointer; font-family:inherit;
+  }
+  .btn.main{background:var(--gold); color:#14100a}
+  .btn.ghost{background:transparent; border:1px solid var(--gold-dim); color:var(--gold)}
+  .done{
+    text-align:center; padding:30px 0 10px; display:none;
+  }
+  .done.on{display:block}
+  .done .tick{font-size:46px; color:var(--gold); line-height:1}
+
+  ul.check{list-style:none; margin:0; padding:0}
+  ul.check li{position:relative; padding:0 0 11px 26px; color:var(--dim); font-size:15.5px}
+  ul.check li:before{content:""; position:absolute; left:2px; top:9px; width:8px; height:8px; border-radius:2px; background:var(--gold)}
+
+  .cta{
+    display:inline-block; background:var(--gold); color:#14100a; padding:16px 34px;
+    border-radius:6px; text-decoration:none; font-weight:800;
+  }
+  footer{padding:40px 0 56px; border-top:1px solid var(--line); text-align:center}
+  footer p{margin:0; font-size:14px; color:#5f5c58}
+</style>
+</head>
+<body>
+
+<div class="banner">Demo — esimerkkiravintola. Tilaus ei mene mihinkään eikä mitään veloiteta.</div>
+
+<div class="hero">
+  <div class="wrap">
+    <h1>Neljä tuotetta.<br><span class="gold">Yksi lause.</span></h1>
+    <p class="lead" style="max-width:640px; margin:0 auto">
+      Näin ruokalistasi näyttää uudelleen rakennettuna — ja näin asiakas tilaa puhumalla.
+    </p>
+  </div>
+</div>
+
+<!-- ENNEN / JÄLKEEN -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Valikon uudistus</p>
+    <h2>Kaikkea kaikille<br><span class="gold">ei myy mitään kenellekään.</span></h2>
+    <p class="lead">Pitkä lista pakottaa asiakkaan valitsemaan. Valinta vie aikaa, aika synnyttää epäröintiä, epäröinti päättyy siihen että hän sulkee sivun. Muutama tuote muistetaan ulkoa — ja muistettu tuote tilataan uudelleen.</p>
+
+    <div class="grid g2" style="margin-top:32px">
+      <div class="panel">
+        <span class="lab old">Ennen — 26 tuotetta</span>
+        <div class="oldmenu">
+          <div>Margherita</div><div>Pepperoni</div><div>Opera</div><div>Quattro Stagioni</div>
+          <div>Vegetariana</div><div>Frutti di Mare</div><div>Kebab-pizza</div><div>Kanapizza</div>
+          <div>Tonnikalapizza</div><div>Hawaii</div><div>Salami</div><div>Bolognese</div>
+          <div>Kebab riisillä</div><div>Kebab ranskalaisilla</div><div>Rullakebab</div>
+          <div>Kanasalaatti</div><div>Kreikkalainen salaatti</div><div>Tonnikalasalaatti</div>
+          <div>Hampurilainen</div><div>Juustohampurilainen</div><div>Kanaburger</div>
+          <div>Ranskalaiset</div><div>Sipulirenkaat</div><div>Mozzarella sticks</div>
+          <div>Virvoitusjuomat</div><div>Jälkiruoat</div>
+        </div>
+        <p class="oldnote">Asiakas selaa, vertailee, epäröi. Kate vaihtelee tuotteittain rajusti, eikä kukaan muista mitä täältä kannattaa ottaa.</p>
+      </div>
+
+      <div class="panel after">
+        <span class="lab new">Jälkeen — 4 tuotetta</span>
+        <div class="hit"><span><b>Pepperoni Classic</b><small>Käsintehty pohja, tuplajuusto</small></span><span class="pr">12,90 / 16,90</span></div>
+        <div class="hit"><span><b>Smash Burger</b><small>Kaksi pihviä, cheddar, talon kastike</small></span><span class="pr">13,50</span></div>
+        <div class="hit"><span><b>Ranskalaiset</b><small>Paksut, mereisuolalla</small></span><span class="pr">4,50</span></div>
+        <div class="hit"><span><b>Juoma</b><small>Cola / Vesi</small></span><span class="pr">3,00</span></div>
+        <p class="oldnote" style="color:var(--dim)">Valittu myyntitilastoistasi: suosio × kate × kestävyys kuljetuksessa. Muut tuotteet jäävät saliin — verkkoon menee vain se, mikä myy ja kestää matkan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TILAUS -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Tilaaminen äänellä</p>
+    <h2>Sano mitä haluat.<br><span class="gold">Kokeile itse.</span></h2>
+    <p class="lead">Paina mikrofonia ja puhu tavallisesti — esimerkiksi: <em style="color:var(--ink)">“Kaksi isoa pepperonia ja yksi cola, Hämeentie 19, seitsemäksi.”</em> Toimii suomeksi, englanniksi, ruotsiksi, venäjäksi, turkiksi ja arabiaksi.</p>
+
+    <div class="order" style="margin-top:30px">
+      <div class="micwrap">
+        <button class="micbtn" id="mic" aria-label="Puhu">
+          <svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg>
+        </button>
+        <div class="micstate" id="state">Paina ja sano tilauksesi</div>
+      </div>
+
+      <div class="cart" id="cart">
+        <div id="lines"></div>
+        <div class="sum"><span>Yhteensä</span><span id="total">0,00 €</span></div>
+        <div class="meta" id="meta"></div>
+        <div id="unclear"></div>
+        <div class="confirm">
+          <button class="btn main" id="ok">Vahvista tilaus</button>
+          <button class="btn ghost" id="again">Sano uudelleen</button>
+        </div>
+        <p style="font-size:13.5px; color:#6b6862; margin:14px 0 0">
+          Tilaus luetaan aina läpi ennen vahvistusta. Väärä tilaus maksaa enemmän kuin hidas lomake.
+        </p>
+      </div>
+
+      <div class="done" id="done">
+        <div class="tick">&#10003;</div>
+        <h3 style="margin:14px 0 6px">Tilaus vahvistettu</h3>
+        <p style="margin:0">Demo päättyy tähän — oikeassa järjestelmässä tilaus menisi keittiöön ja asiakas tallentuisi omaan asiakasrekisteriisi.</p>
+        <button class="btn ghost" id="reset" style="margin-top:20px">Kokeile uudelleen</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MIKSI -->
+<section>
+  <div class="wrap">
+    <p class="kicker">Miksi tämä ratkaisee</p>
+    <h2>Oma kanava ei häviä hinnassa.<br><span class="gold">Se häviää vaivassa.</span></h2>
+    <div class="grid g2" style="margin-top:28px">
+      <div>
+        <p>Alusta muistaa asiakkaan osoitteen ja maksukortin. Oma sivusi aloittaa joka kerta tyhjästä — selaa, valitse, kirjoita osoite, kirjoita puhelin. Kymmenen askelta yhtä vastaan.</p>
+        <p>Ääni poistaa eron kokonaan. Eikä mitään tarvitse muistaa etukäteen, koska sanominen on nopeampaa kuin muistaminen.</p>
+      </div>
+      <div>
+        <h3>Ja kun tunnistat asiakkaan</h3>
+        <ul class="check">
+          <li>“Sama kuin viimeksi?” — yksi sana, tilaus valmis</li>
+          <li>Osoite tiedossa, sitä ei kysytä uudelleen</li>
+          <li>Se toimii vain omalla asiakaskunnalla — alustan asiakasta ei tunnisteta</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:30px"><a class="cta" href="index.html#yhteys">Haluan tämän ravintolaani</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap"><p>Demo — Denis Kuznetsov · Autonomiset AI-myyntijärjestelmät · Helsinki</p></div>
+</footer>
+
+<script>
+(function(){
+  var URL   = "https://wispy-cake-1f00.carbo-lignum.workers.dev";
+
+  var MENU = [
+    { nimi:"Pepperoni Classic", koot:{ M:12.90, L:16.90 } },
+    { nimi:"Smash Burger",      hinta:13.50 },
+    { nimi:"Ranskalaiset",      hinta:4.50 },
+    { nimi:"Juoma",             hinta:3.00 }
+  ];
+
+  var SYSTEM = [
+    "You take restaurant orders from speech for a demo restaurant. Understand the order in whatever language it is spoken.",
+    "MENU (only these exist):",
+    "1) Pepperoni Classic — size M 12.90 EUR, size L 16.90 EUR",
+    "2) Smash Burger — 13.50 EUR",
+    "3) Ranskalaiset (fries) — 4.50 EUR",
+    "4) Juoma (Cola or Vesi/water) — 3.00 EUR",
+    "",
+    "Map what was said onto these items. 'iso'/'large'/'big' means size L, 'pieni'/'small' means M. If no size is stated for the pizza, use M.",
+    "Compute 'hinta' as unit price multiplied by quantity. Compute 'yhteensa' as the sum of all line totals. Be exact.",
+    "Extract a delivery address into 'osoite' and a requested time into 'aika' if they were said. Times: interpret ordinary evening speech sensibly - 'seitsemaksi' or 'seven' means 19:00, not 07:00.",
+    "Put into 'epaselva' anything you could not map: items not on the menu, unclear audio, missing detail. Write it in the language that was spoken. Leave it empty if everything was clear.",
+    "If the recording is silent, noisy or unintelligible, return an empty item list and explain that in 'epaselva'.",
+    "Set 'kieli' to the language that was spoken, as a Finnish word.",
+    "Return ONLY the JSON."
+  ].join("\n");
+
+  var SCHEMA = {
+    type:"OBJECT",
+    properties:{
+      tuotteet:{ type:"ARRAY", items:{ type:"OBJECT",
+        properties:{ nimi:{type:"STRING"}, koko:{type:"STRING"}, maara:{type:"INTEGER"}, hinta:{type:"NUMBER"} },
+        required:["nimi","maara","hinta"] } },
+      osoite:{type:"STRING"}, aika:{type:"STRING"}, epaselva:{type:"STRING"},
+      kieli:{type:"STRING"}, yhteensa:{type:"NUMBER"}
+    },
+    required:["tuotteet","yhteensa"]
+  };
+
+  var mic=document.getElementById("mic"), state=document.getElementById("state"),
+      cart=document.getElementById("cart"), lines=document.getElementById("lines"),
+      total=document.getElementById("total"), meta=document.getElementById("meta"),
+      unclear=document.getElementById("unclear"), done=document.getElementById("done"),
+      okBtn=document.getElementById("ok"), again=document.getElementById("again"),
+      reset=document.getElementById("reset");
+
+  var rec=null, chunks=[], stream=null, t0=0, ticker=null, busy=false;
+
+  function eur(x){ return (Math.round(x*100)/100).toFixed(2).replace(".", ",") + " €"; }
+  function say(t, live){ state.textContent = t; state.className = "micstate" + (live ? " live" : ""); }
+
+  function start(){
+    if(!navigator.mediaDevices || !window.MediaRecorder){
+      say("Selaimesi ei tue äänitallennusta."); return;
+    }
+    navigator.mediaDevices.getUserMedia({audio:true}).then(function(s){
+      stream=s; chunks=[];
+      rec=new MediaRecorder(s);
+      rec.ondataavailable=function(e){ if(e.data.size) chunks.push(e.data); };
+      rec.onstop=finish;
+      rec.start(); t0=Date.now();
+      mic.classList.add("rec");
+      ticker=setInterval(function(){
+        var sec=Math.floor((Date.now()-t0)/1000);
+        say("Kuuntelen… " + sec + " s — paina uudelleen kun olet valmis", true);
+        if(sec>=45) stop();
+      }, 250);
+    }).catch(function(){
+      say("Mikrofonia ei voitu käyttää. Salli mikrofoni selaimen osoitepalkista.");
+    });
+  }
+
+  function stop(){
+    if(rec && rec.state==="recording") rec.stop();
+    if(stream) stream.getTracks().forEach(function(t){ t.stop(); });
+    clearInterval(ticker); mic.classList.remove("rec");
+  }
+
+  function finish(){
+    var secs=(Date.now()-t0)/1000;
+    if(!chunks.length || secs<0.8){ say("Liian lyhyt. Paina ja sano tilauksesi."); return; }
+    say("Käsittelen…");
+    busy=true; mic.disabled=true;
+
+    new Blob(chunks).arrayBuffer().then(function(buf){
+      var AC=window.AudioContext||window.webkitAudioContext;
+      return new AC().decodeAudioData(buf);
+    }).then(function(audio){
+      return fetch(URL, {
+        method:"POST", headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({
+          systemInstruction:{ parts:[{ text:SYSTEM }] },
+          contents:[{ role:"user", parts:[{ inlineData:{ mimeType:"audio/wav", data:b64(wav(audio,16000)) } }] }],
+          generationConfig:{
+            temperature:0.2, maxOutputTokens:1400,
+            thinkingConfig:{ thinkingLevel:"low" },
+            responseMimeType:"application/json", responseSchema:SCHEMA
+          }
+        })
+      });
+    }).then(function(r){
+      if(!r.ok) throw new Error(r.status);
+      return r.json();
+    }).then(function(d){
+      var raw = d && d.candidates && d.candidates[0] &&
+                d.candidates[0].content && d.candidates[0].content.parts &&
+                d.candidates[0].content.parts[0] && d.candidates[0].content.parts[0].text;
+      render(JSON.parse(raw));
+    }).catch(function(){
+      say("Jokin meni pieleen. Kokeile uudelleen.");
+    }).finally(function(){
+      busy=false; mic.disabled=false;
+    });
+  }
+
+  function render(o){
+    var items = o.tuotteet || [];
+    if(!items.length){
+      say("En saanut tilauksesta selvää. " + (o.epaselva || "Kokeile uudelleen rauhallisemmin."));
+      cart.classList.remove("on");
+      return;
+    }
+    say("Tarkista tilaus ennen vahvistusta");
+
+    lines.innerHTML = items.map(function(it){
+      return '<div class="row"><span><span class="q">' + it.maara + '×</span>' +
+             esc(it.nimi) + (it.koko ? ' <span class="s">koko ' + esc(it.koko) + '</span>' : '') +
+             '</span><span>' + eur(it.hinta) + '</span></div>';
+    }).join("");
+
+    total.textContent = eur(o.yhteensa || 0);
+
+    var m = "";
+    if(o.osoite) m += '<div><span class="k">Toimitusosoite</span><span>' + esc(o.osoite) + '</span></div>';
+    if(o.aika)   m += '<div><span class="k">Toivottu aika</span><span>' + esc(o.aika) + '</span></div>';
+    if(o.kieli)  m += '<div><span class="k">Kieli</span><span>' + esc(o.kieli) + '</span></div>';
+    meta.innerHTML = m;
+    meta.style.display = m ? "block" : "none";
+
+    unclear.innerHTML = o.epaselva
+      ? '<div class="warn"><b>Tarkennusta tarvitaan:</b> ' + esc(o.epaselva) + '</div>' : '';
+
+    cart.classList.add("on");
+    done.classList.remove("on");
+  }
+
+  function esc(s){ return String(s).replace(/[<>&"]/g, function(c){
+    return {"<":"&lt;",">":"&gt;","&":"&amp;",'"':"&quot;"}[c]; }); }
+
+  function b64(ab){
+    var b=new Uint8Array(ab), s="", step=0x8000;
+    for(var i=0;i<b.length;i+=step) s+=String.fromCharCode.apply(null,b.subarray(i,i+step));
+    return btoa(s);
+  }
+
+  function wav(buf, rate){
+    var src=buf.getChannelData(0), ratio=buf.sampleRate/rate;
+    var n=Math.floor(src.length/ratio), pcm=new Int16Array(n);
+    for(var i=0;i<n;i++){
+      var v=src[Math.floor(i*ratio)];
+      v = v<-1?-1:v>1?1:v;
+      pcm[i]= v<0 ? v*0x8000 : v*0x7FFF;
+    }
+    var out=new ArrayBuffer(44+pcm.length*2), dv=new DataView(out);
+    function str(o,s){ for(var j=0;j<s.length;j++) dv.setUint8(o+j,s.charCodeAt(j)); }
+    str(0,"RIFF"); dv.setUint32(4,36+pcm.length*2,true); str(8,"WAVEfmt ");
+    dv.setUint32(16,16,true); dv.setUint16(20,1,true); dv.setUint16(22,1,true);
+    dv.setUint32(24,rate,true); dv.setUint32(28,rate*2,true);
+    dv.setUint16(32,2,true); dv.setUint16(34,16,true);
+    str(36,"data"); dv.setUint32(40,pcm.length*2,true);
+    for(var m=0;m<pcm.length;m++) dv.setInt16(44+m*2,pcm[m],true);
+    return out;
+  }
+
+  mic.addEventListener("click", function(){
+    if(busy) return;
+    if(rec && rec.state==="recording") stop(); else start();
+  });
+  again.addEventListener("click", function(){ cart.classList.remove("on"); say("Paina ja sano tilauksesi"); });
+  okBtn.addEventListener("click", function(){ cart.classList.remove("on"); done.classList.add("on"); say(""); });
+  reset.addEventListener("click", function(){ done.classList.remove("on"); say("Paina ja sano tilauksesi"); });
+})();
+</script>
+
+</body>
+</html>
