@@ -149,27 +149,55 @@ color:var(--gold); font-weight:700;
 .phone > img{width:100%; height:100%; object-fit:cover; display:block}
 .ui{
 position:absolute; left:36.62%; top:28.29%; width:32.62%; height:48.90%;
-background:rgba(8,8,9,.90); border:1px solid rgba(224,164,76,.32);
-border-radius:16px; padding:5.5% 5%; overflow:hidden;
+background:#0a0a0b; border:1px solid rgba(224,164,76,.32);
+border-radius:16px; overflow:hidden;
 box-shadow:0 0 60px rgba(255,240,210,.28), 0 0 22px rgba(224,164,76,.22);
-backdrop-filter:blur(2px);
 display:flex; flex-direction:column;
-font-size:clamp(7px, 1.05vw, 12px); line-height:1.35;
+font-size:clamp(6px, .92vw, 11px); line-height:1.3;
 }
-.ui .top{font-weight:800; letter-spacing:.02em; margin-bottom:.35em}
-.ui .sub{color:var(--dim); font-size:.82em; margin-bottom:.9em}
-.ui .ln{display:flex; justify-content:space-between; gap:.5em; padding:.42em 0; border-bottom:1px solid rgba(255,255,255,.07)}
-.ui .ln i{font-style:normal; color:var(--gold); font-weight:800; margin-right:.3em}
-.ui .sum{display:flex; justify-content:space-between; margin-top:.6em; font-weight:800; font-size:1.06em}
-.ui .sum span:last-child{color:var(--gold)}
-.ui .mic{
-margin-top:auto; display:flex; align-items:center; gap:.45em;
-color:var(--gold); font-weight:700; font-size:.88em;
-}
-.ui .mic b{
-width:1.9em; height:1.9em; border-radius:50%; background:var(--gold); color:#14100a;
+.ui .ubar{display:flex; align-items:center; gap:.45em; padding:.6em .6em .55em; border-bottom:1px solid #26262a; flex-shrink:0}
+.ui .ubar b{
+width:1.7em; height:1.7em; border-radius:.4em; background:var(--gold); color:#14100a;
 display:flex; align-items:center; justify-content:center; font-size:.9em; flex-shrink:0;
 }
+.ui .ubar i{font-style:normal; font-weight:800; display:block; line-height:1.15}
+.ui .ubar small{color:var(--dim); font-size:.68em; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ui .uoffer{position:relative; height:29%; flex-shrink:0; overflow:hidden}
+.ui .uoffer img{width:100%; height:100%; object-fit:cover; display:block}
+.ui .uveil{position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,.4) 0%, transparent 36%, rgba(0,0,0,.86) 82%, #0a0a0b 100%)}
+.ui .utxt{position:absolute; left:.6em; right:.6em; bottom:.35em}
+.ui .utag{
+display:inline-block; background:var(--gold); color:#14100a; font-weight:800;
+font-size:.58em; letter-spacing:.07em; text-transform:uppercase;
+padding:.25em .55em; border-radius:1em; margin-bottom:.3em;
+}
+.ui .utxt b{display:block; font-size:1.2em; font-weight:800; letter-spacing:-.01em; line-height:1.08}
+.ui .uvoice{
+display:flex; align-items:center; gap:.45em; margin:.55em .6em 0; padding:.5em;
+border:1px solid rgba(224,164,76,.34); border-radius:.65em; background:rgba(224,164,76,.08); flex-shrink:0;
+}
+.ui .uvoice b{
+width:1.8em; height:1.8em; border-radius:50%; background:var(--gold); color:#14100a;
+display:flex; align-items:center; justify-content:center; font-size:.72em; flex-shrink:0;
+}
+.ui .uvoice span{min-width:0}
+.ui .uvoice i{font-style:normal; font-weight:700; display:block; line-height:1.2}
+.ui .uvoice small{color:var(--dim); font-size:.66em; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ui .uitem{display:flex; align-items:center; gap:.45em; margin:.5em .6em 0; padding-bottom:.45em; border-bottom:1px solid #26262a}
+.ui .uitem img{width:2.2em; height:2.2em; border-radius:.38em; object-fit:cover; flex-shrink:0}
+.ui .uitem span{flex:1; min-width:0}
+.ui .uitem i{font-style:normal; font-weight:700; display:block; line-height:1.2; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ui .uitem small{color:var(--gold); font-weight:800; font-size:.76em; display:block}
+.ui .uitem em{
+font-style:normal; width:1.4em; height:1.4em; border-radius:50%;
+border:1px solid rgba(224,164,76,.5); color:var(--gold); flex-shrink:0;
+display:flex; align-items:center; justify-content:center; font-size:.95em; line-height:1;
+}
+.ui .usum{
+margin-top:auto; display:flex; justify-content:space-between; align-items:baseline;
+padding:.55em .6em; border-top:1px solid #26262a; font-weight:800; flex-shrink:0;
+}
+.ui .usum span:last-child{color:var(--gold)}
 ul.check{list-style:none; margin:0; padding:0}
 ul.check li{position:relative; padding:0 0 12px 28px; color:var(--dim); font-size:15.5px}
 ul.check li:before{content:""; position:absolute; left:2px; top:9px; width:9px; height:9px; border-radius:2px; background:var(--gold)}
@@ -388,15 +416,34 @@ Loput jäävät saliin; verkkoon menee vain se, mikä myy ja kestää matkan.
 <div class="phone">
 <img src="img/app.jpg" alt="Tilaus puhumalla" loading="lazy">
 <div class="ui">
-<div class="top">Ravintola Esimerkki</div>
-<div class="sub">Tilauksesi</div>
-<div class="ln"><span><i>2×</i>Pepperoni Classic <small>L</small></span><span>33,80</span></div>
-<div class="ln"><span><i>1×</i>Ranskalaiset</span><span>4,50</span></div>
-<div class="ln"><span><i>1×</i>Juoma</span><span>3,00</span></div>
-<div class="sum"><span>Yhteensä</span><span>41,30 €</span></div>
-<div class="mic"><b>&#9679;</b>Kuuntelen…</div>
+<div class="ubar">
+<b>R</b>
+<span><i>Ravintola Esimerkki</i><small>Hämeentie 12 · avoinna 10–22</small></span>
+</div>
+<div class="uoffer">
+<img src="img/dish-fries.jpg" alt="" loading="lazy">
+<div class="uveil"></div>
+<div class="utxt">
+<span class="utag">Tämän päivän tarjous</span>
+<b>Ranskalaiset 1,90 €</b>
 </div>
 </div>
+<div class="uvoice">
+<b>&#9679;</b>
+<span><i>Sano tilauksesi</i><small>“Kaksi isoa pepperonia ja cola…”</small></span>
+</div>
+<div class="uitem">
+<img src="img/dish-pizza.jpg" alt="" loading="lazy">
+<span><i>Pepperoni Classic</i><small>12,90 €</small></span>
+<em>+</em>
+</div>
+<div class="uitem">
+<img src="img/dish-burger.jpg" alt="" loading="lazy">
+<span><i>Smash Burger</i><small>13,50 €</small></span>
+<em>+</em>
+</div>
+<div class="usum"><span>Yhteensä</span><span>0,00 €</span></div>
+</div>      </div>
 <div>
 <h3 style="margin-bottom:14px">Oma kanava ei häviä hinnassa — se häviää vaivassa</h3>
 <p>Alusta muistaa asiakkaan osoitteen ja maksukortin. Oma sivu aloittaa joka kerta tyhjästä: selaa, valitse, kirjoita osoite, kirjoita puhelin. Kymmenen askelta yhtä vastaan.</p>
