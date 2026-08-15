@@ -790,20 +790,42 @@ if(recorder && recorder.state==="recording") recorder.stop();
 if(stream) stream.getTracks().forEach(function(t){ t.stop(); });
 clearInterval(ticker); mic.classList.remove("rec"); recBar.classList.remove("on");
 }
-function finishRec(){
-var secs=Math.round((Date.now()-t0)/1000);
-if(!chunks.length || secs<1) return;
-new Blob(chunks).arrayBuffer().then(function(buf){
-var AC=window.AudioContext||window.webkitAudioContext;
-return new AC().decodeAudioData(buf);
-}).then(function(audio){
-dispatch([{ inlineData:{ mimeType:"audio/wav", data:b64(wav(audio,16000)) } }],
-"🎤 Ääniviesti ("+fmt(secs)+")", { text:"[ääniviesti]" });
-}).catch(function(){
-add("Äänitteen käsittely epäonnistui. Kokeile uudelleen tai kirjoita kysymyksesi.","err");
-});
-}
-function b64(ab){
+// Decoding to WAV happens on the phone, and phones are where it goes wrong.
+  // Older Safari does not return a promise from decodeAudioData - it takes
+  // callbacks - so ".then" reached into undefined and every recording died with
+  // "processing failed". And when the phone hands back a format the decoder will
+  // not take, there is no reason to throw the recording away: the model accepts
+  // mp4, webm and ogg as they are.
+  function decodeAudio(buf){
+    return new Promise(function(resolve, reject){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) { reject(0); return; }
+      var ctx = new AC();
+      if (ctx.state === "suspended" && ctx.resume) { try { ctx.resume(); } catch(e){} }
+      var p;
+      try { p = ctx.decodeAudioData(buf, resolve, reject); } catch(e) { reject(e); return; }
+      if (p && typeof p.then === "function") { p.then(resolve, reject); }
+    });
+  }
+  function finishRec(){
+    var secs=Math.round((Date.now()-t0)/1000);
+    if(!chunks.length){ add("Äänitettä ei syntynyt. Kokeile uudelleen.","err"); return; }
+    if(secs<1){ add("Liian lyhyt äänite. Pidä nappi pohjassa hetki pidempään.","err"); return; }
+    var type = (recorder && recorder.mimeType) ? recorder.mimeType.split(";")[0] : "audio/webm";
+    var blob = new Blob(chunks, { type: type });
+    blob.arrayBuffer().then(function(buf){
+      return decodeAudio(buf).then(function(audio){
+        return { mimeType:"audio/wav", data:b64(wav(audio,16000)) };
+      }, function(){
+        return { mimeType: type, data: b64(buf) };
+      });
+    }).then(function(part){
+      dispatch([{ inlineData: part }], "🎤 Ääniviesti ("+fmt(secs)+")", { text:"[ääniviesti]" });
+    }).catch(function(){
+      add("Äänitteen käsittely epäonnistui. Kokeile uudelleen tai kirjoita kysymyksesi.","err");
+    });
+  }
+  function b64(ab){
 var b=new Uint8Array(ab), s="", step=0x8000;
 for(var i=0;i<b.length;i+=step) s+=String.fromCharCode.apply(null,b.subarray(i,i+step));
 return btoa(s);
