@@ -134,8 +134,8 @@ transition:transform .15s ease, background .15s ease;
 .dishes{display:grid; grid-template-columns:repeat(4,1fr); gap:2px; margin-top:38px}
 @media(max-width:900px){ .dishes{grid-template-columns:repeat(2,1fr)} }
 .dish{position:relative; aspect-ratio:2/3; overflow:hidden; background:#000}
-.dish img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease}
-.dish:hover img{transform:scale(1.04)}
+.dish img,.dish video{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease}
+.dish:hover img,.dish:hover video{transform:scale(1.04)}
 .dish .cap{
 position:absolute; left:0; right:0; bottom:0; padding:26px 20px 20px;
 background:linear-gradient(180deg, transparent 0%, rgba(0,0,0,.72) 55%, rgba(0,0,0,.92) 100%);
@@ -297,6 +297,7 @@ display:none; flex-direction:column; overflow:hidden; box-shadow:0 20px 60px rgb
 <p class="kicker">Calculator</p>
 <h2>Measure the customer potential<br><span class="gold">of your location.</span></h2>
 <p class="lead">The calculation is based on a restaurant in the center of Helsinki. According to EU statistics, <em>26% of people in Finland order food online</em>. Within one kilometer of the restaurant, 47,000 people live and work — this represents about 12,000 who order online. Every day, they place <em>800–900 orders</em> right around you.</p>
+<p class="lead">An additional 42,000 people use public transport stops within this kilometer daily. They are not included in this calculation at all.</p>
 <p class="lead">Enter your postal code to see the numbers for your area.</p>
 <div class="calc">
 <input id="pnoInput" list="pnoList" placeholder="Postal code, e.g. 00530" maxlength="5" inputmode="numeric" autocomplete="off">
@@ -363,7 +364,9 @@ And on top of that
 <div class="cap"><b>Smash Burger</b><span>13,50 €</span></div>
 </div>
 <div class="dish">
-<img src="img/dish-fries.jpg" alt="Ranskalaiset" loading="lazy">
+<video src="img/dish-fries.mp4" poster="img/dish-fries-poster.jpg"
+autoplay loop muted playsinline preload="none"
+aria-label="Fries"></video>
 <div class="cap"><b>Fries</b><span>4.50 EUR</span></div>
 </div>
 <div class="dish">
